@@ -1,0 +1,53 @@
+name: "Actividad de cronograma"
+description: "Registrar una actividad del cronograma con su análisis PERT y ruta crítica (Paso 6)"
+title: "[ACT-XX] "
+labels: ["actividad"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        *Recuerda: El Hito (Milestone) y las fechas de inicio/fin para el Roadmap se configuran en el panel lateral derecho del issue.*
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción de la actividad
+      description: Define claramente el trabajo a realizar y si depende de alguna actividad anterior para poder iniciar.
+      placeholder: "Ej: Configurar el entorno de desarrollo y la base de datos de pruebas. Depende de la finalización de [ACT-02]."
+    validations:
+      required: true
+  - type: textarea
+    id: analisis_pert
+    attributes:
+      label: Análisis PERT (Valores en días)
+      description: Reemplaza las "X" con los valores numéricos correspondientes.
+      value: |
+        - **Optimista (O):** X
+        - **Más probable (M):** X
+        - **Pesimista (P):** X
+        - **Tiempo Esperado (TE):** X
+        - **Desviación Estándar (σ):** X
+    validations:
+      required: true
+  - type: textarea
+    id: ruta_critica_cpm
+    attributes:
+      label: Análisis de Ruta Crítica - CPM (Valores en días)
+      description: Reemplaza las "X" con los valores numéricos correspondientes.
+      value: |
+        - **Inicio más temprano (ES):** X
+        - **Fin más temprano (EF):** X
+        - **Inicio más tardío (LS):** X
+        - **Fin más tardío (LF):** X
+        - **Holgura:** X
+    validations:
+      required: true
+  - type: dropdown
+    id: es_ruta_critica
+    attributes:
+      label: "¿Pertenece a la Ruta Crítica?"
+      description: Si la holgura es 0, la actividad pertenece a la ruta crítica.
+      options: 
+        - "Sí"
+        - "No"
+    validations:
+      required: true

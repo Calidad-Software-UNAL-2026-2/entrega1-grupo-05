@@ -1,0 +1,170 @@
+name: "Paso 3 — Mapa de Procesos (flujo único)"
+
+# Úsalo si tu modelo de ciclo de vida NO tiene procesos en paralelo
+# (secuencial, iterativo, incremental, cascada simple, etc.).
+# Si tu modelo sí tiene ramas en paralelo, usa en su lugar el workflow
+# "mapa-procesos-paralelo.yml".
+#
+# Fíjate el primer proceso (Requisitos) crea el documento Y agrega su propia
+# información en el mismo job (en dos steps independientes), y el
+# último proceso (Testing) agrega su información Y hace el commit/push
+# en el mismo job. Así, cada job que ves en la pestaña Actions es un
+# proceso real del proyecto — no hay jobs de "plumbing" sin información
+# relevante ensuciando la vista del flujo.
+#
+# Cómo usarlo:
+# 1. Reemplaza el contenido de los jobs de ejemplo (requisitos, diseño,
+#    implementacion, testing) por los procesos reales que tu equipo
+#    seleccionó en el Paso 3. Puedes duplicar el bloque de un job tantas
+#    veces como procesos tengas, ajustando el "needs:" para reflejar el
+#    orden real de tu modelo de ciclo de vida.
+# 2. El primer job de la cadena es el único que debe crear el documento
+#    (con el encabezado) además de agregar su proceso, cada cosa en su
+#    propio step; los jobs intermedios solo descargan, agregan y vuelven
+#    a subir el artifact; el último job, además de agregar su proceso,
+#    hace el commit/push.
+# 3. Ve a la pestaña "Actions" -> este workflow -> "Run workflow".
+#    Se dispara SOLO manualmente para no gastar minutos de CI de la
+#    organización.
+# 4. El resultado final queda en docs/mapa-procesos.md.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # -----------------------------------------------------------------
+  # Primer proceso: crea el documento (con su encabezado) en un step, y
+  # agrega su propia información en otro step, independiente. No tiene
+  # "needs:" porque es la raíz de la cadena.
+  # -----------------------------------------------------------------
+  requisitos:
+    name: "Requisitos"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Crear documento
+        run: |
+          mkdir -p docs
+          cat <<'EOF' > docs/mapa-procesos.md
+          # Mapa de Procesos y Modelo de Ciclo de Vida
+
+          > Generado con el workflow de flujo único. La definición formal del
+          > modelo de ciclo de vida (justificación, orden, relación entre
+          > procesos) se documenta en la wiki, página `04c-Modelo-Ciclo-Vida`,
+          > no en este archivo.
+
+          EOF
+      - name: Agregar este proceso al documento
+        run: |
+          cat <<'EOF' >> docs/mapa-procesos.md
+          ## Proceso: Requisitos
+
+          - **Entradas:** Modelo verbal extendido, necesidades de negocio e interesados
+          - **Actividades:** Elicitación, análisis y especificación de requisitos
+          - **Salidas:** Documento de especificación de requisitos
+          - **Recursos:** BABOK v3, entrevistas/supuestos del equipo
+
+          EOF
+      - name: Subir artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapa-procesos
+          path: docs/mapa-procesos.md
+          overwrite: true
+
+  # -----------------------------------------------------------------
+  # Procesos intermedios: descargan el documento, agregan su proceso y
+  # lo vuelven a subir. Copia este bloque por cada proceso intermedio
+  # que necesites.
+  # -----------------------------------------------------------------
+  diseno:
+    name: "Diseño"
+    needs: requisitos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mapa-procesos
+          path: docs/
+      - name: Agregar este proceso al documento
+        run: |
+          cat <<'EOF' >> docs/mapa-procesos.md
+          ## Proceso: Diseño
+
+          - **Entradas:** Documento de especificación de requisitos
+          - **Actividades:** Definición de módulos, interfaces y decisiones de diseño
+          - **Salidas:** Vista arquitectónica del sistema
+          - **Recursos:** Requisitos funcionales/no funcionales priorizados
+
+          EOF
+      - name: Subir artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapa-procesos
+          path: docs/mapa-procesos.md
+          overwrite: true
+
+  implementacion:
+    name: "Implementación"
+    needs: diseno
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mapa-procesos
+          path: docs/
+      - name: Agregar este proceso al documento
+        run: |
+          cat <<'EOF' >> docs/mapa-procesos.md
+          ## Proceso: Implementación
+
+          - **Entradas:** Vista arquitectónica del sistema
+          - **Actividades:** Construcción de los módulos definidos en el diseño
+          - **Salidas:** Componentes de software construidos
+          - **Recursos:** Estándares de codificación, entorno de desarrollo
+
+          EOF
+      - name: Subir artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapa-procesos
+          path: docs/mapa-procesos.md
+          overwrite: true
+
+  # -----------------------------------------------------------------
+  # Último proceso: agrega su propia información Y, en el mismo job,
+  # hace el commit/push del documento final. Cambia el "needs:" para
+  # que apunte a tu ÚLTIMO proceso real.
+  # -----------------------------------------------------------------
+  testing:
+    name: "Testing"
+    needs: implementacion
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Descargar artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mapa-procesos
+          path: docs/
+      - name: Agregar este proceso al documento
+        run: |
+          cat <<'EOF' >> docs/mapa-procesos.md
+          ## Proceso: Testing
+
+          - **Entradas:** Componentes de software construidos
+          - **Actividades:** Diseño y ejecución de pruebas, registro de defectos
+          - **Salidas:** Reporte de pruebas, defectos identificados
+          - **Recursos:** Plan de pruebas, casos de prueba
+
+          EOF
+      - name: Commit y push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(mapa-procesos): actualizar mapa de procesos (flujo único)"
