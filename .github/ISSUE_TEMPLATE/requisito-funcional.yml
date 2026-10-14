@@ -1,6 +1,7 @@
 name: "Requisito funcional"
 description: "Registrar un requisito funcional derivado del modelo verbal (Paso 2, ítem 4)"
 title: "[RF-XX] "
+projects: ["Calidad-Software-UNAL-2026-2/9"]
 labels: ["tipo:funcional"]
 body:
   - type: markdown

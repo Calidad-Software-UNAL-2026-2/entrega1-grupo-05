@@ -1,6 +1,7 @@
 name: "Riesgo"
 description: "Registrar un riesgo del proyecto (Paso 5 - Registro de Riesgos)"
 title: "[RSG-XX] "
+projects: ["Calidad-Software-UNAL-2026-2/9"]
 labels: ["riesgo"]
 body:
   - type: markdown

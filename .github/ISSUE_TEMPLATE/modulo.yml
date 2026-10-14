@@ -1,6 +1,7 @@
 name: "Módulo del sistema"
 description: "Crear un nuevo módulo para agrupar los requisitos funcionales y no funcionales."
 title: "[MOD-XX] "
+projects: ["Calidad-Software-UNAL-2026-2/9"]
 labels: ["tipo:modulo"]
 body:
   - type: markdown

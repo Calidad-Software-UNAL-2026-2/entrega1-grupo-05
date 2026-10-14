@@ -1,6 +1,7 @@
 name: "Requisito no funcional"
 description: "Registrar un requisito no funcional derivado del modelo verbal (Paso 2, ítem 4)"
 title: "[RNF-XX] "
+projects: ["Calidad-Software-UNAL-2026-2/9"]
 labels: ["tipo:no-funcional"]
 body:
   - type: markdown
