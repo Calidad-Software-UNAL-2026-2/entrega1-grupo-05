@@ -1,62 +1,45 @@
-# Mapa de Procesos y Modelo de Ciclo de Vida
+# Mapa de Procesos Clave — AuditTrack
 
-> Generado con el workflow paralelo: Requisitos se ejecuta primero;
-> luego la rama de Hardware/Firmware (3 procesos) y la rama de
-> Software/Backend (2 procesos) se ejecutan de forma simultánea; al
-> final, Integración y despliegue une ambas ramas a este documento.
-> La definición formal del modelo de ciclo de vida se documenta en
-> la wiki, página `04c-Modelo-Ciclo-Vida`, no en este archivo.
+Este documento contiene la caracterización de los procesos clave / misionales del ciclo de vida del software para la plataforma **AuditTrack**, generado automáticamente mediante el workflow de flujo único.
 
-## Proceso: Requisitos
+---
 
-- **Entradas:** Modelo verbal extendido, necesidades de negocio e interesados
-- **Actividades:** Elicitación, análisis y especificación de requisitos, tanto para el dispositivo (Hardware) como para la plataforma (Software)
-- **Salidas:** Documento de especificación de requisitos
-- **Recursos:** BABOK v3, entrevistas/supuestos del equipo
+### Proceso: Análisis de Requisitos de Software
 
-## Rama Hardware / Firmware
+- **Tipo:** Clave
+- **Justificación de la selección:** Permite especificar detalladamente las funcionalidades de creación de auditorías, importación de datos contables, gestión de usuarios y generación de informes financieros automáticos.
+- **Entradas:** Modelo verbal de AuditTrack, necesidades del negocio y regulaciones financieras.
+- **Actividades:** Elicitación de necesidades de auditores y contadores, redacción de historias de usuario con criterios de aceptación y definición de requisitos no funcionales.
+- **Salidas:** Documento de Especificación de Requisitos, historias de usuario cargadas en GitHub Issues (`[RF-XX]`, `[RNF-XX]`) y vista "Registro de Requisitos".
+- **Recursos:** Analista de Requisitos / Product Owner, formularios de GitHub Issues.
 
-### Proceso: Diseño de hardware y selección de componentes
 
-- **Entradas:** Requisitos funcionales de sensado/actuación; restricciones de consumo energético y costo
-- **Actividades:** Selección de sensores y actuadores, diseño del esquemático y la PCB, definición de la arquitectura eléctrica del dispositivo
-- **Salidas:** Esquemático aprobado, lista de materiales (BOM), prototipo de placa
-- **Recursos:** Software de diseño electrónico (KiCad/Altium), catálogo de componentes, datasheets de fabricantes
+### Proceso: Diseño y Arquitectura de Software
 
-### Proceso: Desarrollo de firmware
+- **Tipo:** Clave
+- **Justificación de la selección:** Define la estructura tecnológica modular en Python y JavaScript, el modelo de base de datos SQL y la arquitectura necesaria para soportar un procesamiento transaccional veloz y seguro.
+- **Entradas:** Especificación de Requisitos de Software y métricas de rendimiento y calidad.
+- **Actividades:** Diseño de la arquitectura de la aplicación, modelado del esquema entidad-relación SQL, diseño de interfaces del panel de control y definición de APIs de integración.
+- **Salidas:** Documento de Arquitectura de Software, modelo relacional de BD SQL y wireframes/diseños de interfaz de usuario.
+- **Recursos:** Arquitecto de Software, diseñador UI/UX y herramientas de diagramación (Draw.io / PlantUML).
 
-- **Entradas:** Esquemático y BOM aprobados (proceso anterior); requisitos funcionales de sensado/actuación
-- **Actividades:** Programación del microcontrolador, implementación de drivers de sensores, integración del protocolo de comunicación (LoRaWAN)
-- **Salidas:** Firmware compilado y versionado; documentación de pines y del protocolo usado
-- **Recursos:** IDE de firmware (Arduino), kit de desarrollo del microcontrolador, especificación del protocolo elegido
 
-### Proceso: Pruebas de integración hardware
+### Proceso: Construcción y Desarrollo de Software
 
-- **Entradas:** Prototipo de placa (proceso 1); firmware compilado (proceso 2)
-- **Actividades:** Pruebas de banco (consumo eléctrico, rango de sensado, estabilidad de la comunicación), ajustes de calibración
-- **Salidas:** Reporte de pruebas de hardware; lista de defectos y ajustes de calibración
-- **Recursos:** Banco de pruebas, multímetro/osciloscopio, dispositivo prototipo
+- **Tipo:** Clave
+- **Justificación de la selección:** Materializa en código fuente el motor de análisis automático de transacciones, los módulos de carga de datos financieros y la generación gráfica de informes.
+- **Entradas:** Documento de Arquitectura, diseño de base de datos y tareas de desarrollo asignadas.
+- **Actividades:** Codificación en Python (backend) y JavaScript (frontend), desarrollo de consultas SQL optimizadas para la regla de <5s por 10,000 transacciones e integración de componentes.
+- **Salidas:** Código fuente compilado de AuditTrack en el repositorio Git, componentes de software ejecutables y endpoints de API.
+- **Recursos:** Desarrolladores Frontend y Backend, IDEs de programación, lenguajes Python y JavaScript, motor SQL.
 
-## Rama Software / Backend
 
-### Proceso: Desarrollo de API y backend de ingesta de datos
+### Proceso: Transición y Despliegue
 
-- **Entradas:** Protocolo de comunicación acordado con el equipo de Hardware (decisión de diseño temprana, no una dependencia de CI); requisitos de interfaz (Paso 2)
-- **Actividades:** Diseño del endpoint de ingesta, implementación del backend, definición del esquema de la base de datos de telemetría
-- **Salidas:** API de ingesta desplegada en entorno de pruebas; esquema de base de datos
-- **Recursos:** Framework backend elegido por el equipo, base de datos de series de tiempo, entorno de pruebas
-
-### Proceso: Desarrollo del dashboard de monitoreo
-
-- **Entradas:** API de ingesta (proceso anterior); requisitos funcionales de visualización (Paso 2)
-- **Actividades:** Diseño de las vistas de monitoreo, consumo de la API, despliegue del dashboard
-- **Salidas:** Dashboard funcional en entorno de pruebas
-- **Recursos:** Framework frontend elegido por el equipo, librería de gráficos
-
-## Proceso: Integración y despliegue
-
-- **Entradas:** Firmware probado y reporte de pruebas de hardware (rama Hardware); dashboard funcional en entorno de pruebas (rama Software)
-- **Actividades:** Conexión del dispositivo físico al backend desplegado, validación end-to-end del flujo de datos (sensor → firmware → API → dashboard), ajustes finales de configuración
-- **Salidas:** Sistema IoT integrado y validado end-to-end
-- **Recursos:** Dispositivo prototipo, entorno de backend/dashboard desplegado, plan de pruebas de integración
+- **Tipo:** Clave
+- **Justificación de la selección:** Entrega el sistema AuditTrack en el entorno productivo cloud para que pueda ser utilizado por los auditores y administradores de las empresas cliente.
+- **Entradas:** Incremento de software probado y verificado, scripts de despliegue y base de datos configurada.
+- **Actividades:** Ejecución de scripts de migración de base de datos SQL, despliegue del código fuente en el servidor de producción y pruebas de humo (smoke tests) post-despliegue.
+- **Salidas:** Sistema AuditTrack desplegado y accesible en producción, versión etiquetada (Release Tag).
+- **Recursos:** Equipo de despliegue, scripts de integración/despliegue continuo.
 
